@@ -19,5 +19,9 @@
   "homepage": "https://github.com/priyashuu/ToDo-List-Ethereum-Dapp#readme",
   "dependencies": {
     "hardhat": "^2.22.19"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "chai-as-promised": "^8.0.1"
   }
 }
