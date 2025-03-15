@@ -1,46 +1,48 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers } = require("hardhat"); // Yaha pe sahi import karo
 
 describe("TodoList contract", function () {
-    let TodoList, todolist, owner;
+    let TodoList, todoList, owner;
 
     beforeEach(async function () {
-        [owner] = await ethers.getSigners(); // Fetch the test accounts
-        TodoList = await ethers.getContractFactory("TodoList"); // Get contract factory
-        todolist = await TodoList.deploy(); // Deploy contract
-        await todolist.deployed(); // Ensure deployment is complete
+        [owner] = await ethers.getSigners(); // Yaha error aa raha tha
+        TodoList = await ethers.getContractFactory("TodoList");
+        todoList = await TodoList.deploy();
+        await todoList.deployed();
 
-        console.log("Deployed Contract Address:", todolist.address);
+        console.log("Deployed Contract Address:", todoList.address);
     });
 
     it("should create a new task", async function () {
         const text = "Learn Solidity";
-        await todolist.create(text); // Create a new task
+        await todoList.create(text);
 
-        const task = await todolist.get(0); // Retrieve the task
-
-        expect(task[0]).to.equal(text); // Check task text
-        expect(task[1]).to.be.false; // Check task completion status
+        const [taskText, completed] = await todoList.get(0);
+        expect(taskText).to.equal(text);
+        expect(completed).to.be.false;
     });
 
     it("should update the text of an existing task", async function () {
         const initialText = "Learn Solidity";
         const updatedText = "Learn Hardhat";
 
-        await todolist.create(initialText); // Create initial task
-        await todolist.updateText(0, updatedText); // Update task text
+        await todoList.create(initialText);
+        await todoList.updateText(0, updatedText);
 
-        const task = await todolist.get(0);
-        expect(task[0]).to.equal(updatedText); // Verify updated text
+        const [taskText] = await todoList.get(0);
+        expect(taskText).to.equal(updatedText);
     });
 
     it("should toggle the completion status of a task", async function () {
         const text = "Learn Solidity";
-        await todolist.create(text);
+        await todoList.create(text);
 
-        await todolist.toggleCompleted(0); // Toggle completion status
-        const task = await todolist.get(0);
+        await todoList.toggleCompleted(0);
+        const [, completedAfterToggle] = await todoList.get(0);
+        expect(completedAfterToggle).to.be.true;
 
-        expect(task[1]).to.be.true; // Check if completion status changed to true
+        await todoList.toggleCompleted(0);
+        const [, completedAfterToggle2] = await todoList.get(0);
+        expect(completedAfterToggle2).to.be.false;
     });
 });
